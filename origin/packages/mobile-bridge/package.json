@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OriginProtocol/origin.git"
+    "url": ""
   },
   "author": "Origin Protocol Inc",
   "license": "MIT",
