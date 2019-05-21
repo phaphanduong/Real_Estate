@@ -23,10 +23,6 @@ export LOG_LEVEL=DEBUG
 ```
 
 
-## Browser Notifcations (Old)
-
-See https://github.com/OriginProtocol/origin/issues/806 👊
-
 ## Getting Started
 
 ### The Easy Way
