@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "faucet.fullname" . }}
+  labels:
+    app: {{ template "faucet.fullname" . }}
+    app.kubernetes.io/name: origin
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/part-of: origin-faucet
+spec:
+  replicas: {{ default 1 .Values.faucetReplicas }}
+  selector:
+    matchLabels:
+      app: {{ template "faucet.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "faucet.fullname" . }}
+        release: "{{ .Release.Name }}"
+    spec:
+      containers:
+      - name: origin-faucet
+        image: "{{ .Values.containerRegistry }}/{{ .Release.Namespace }}/{{ .Values.faucetImage }}:{{ .Values.faucetImageTag }}"
+        imagePullPolicy: Always
+        env:
+        - name: ENVKEY
+          valueFrom:
+            secretKeyRef:
+              name: {{ template "faucet.fullname" . }}
+              key: ENVKEY
+        ports:
+        - containerPort: 5000
+      - name: cloudsql-proxy
+        image: gcr.io/cloudsql-docker/gce-proxy:1.11
+        command: ["/cloud_sql_proxy",
+                  "-instances={{ .Values.databaseInstance }}=tcp:5432",
+                  "-credential_file=/secrets/cloudsql/credentials.json"]
+        securityContext:
+          runAsUser: 2  # non-root user
+          allowPrivilegeEscalation: false
+        volumeMounts:
+          - name: cloudsql-instance-credentials
+            mountPath: /secrets/cloudsql
+            readOnly: true
+      volumes:
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials

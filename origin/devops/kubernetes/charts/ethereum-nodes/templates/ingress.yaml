@@ -1,0 +1,48 @@
+{{- if .Values.host }}
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "ethereum.fullname" . }}
+  labels:
+    app: {{ template "ethereum.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+  annotations:
+    kubernetes.io/ingress.class: nginx-ingress
+    kubernetes.io/tls-acme: "true"
+    certmanager.k8s.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "ingress"
+    nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
+    nginx.ingress.kubernetes.io/limit-rps: "20"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    # Increase timeouts for websockets
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  tls:
+    - secretName: {{ .Values.host }}
+      hosts:
+        - {{ .Values.host }}
+  rules:
+  - host: {{ .Values.host }}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: {{ template "ethereum.fullname" . }}-ethstats
+          servicePort: 80
+      - path: /rpc
+        backend:
+          serviceName: {{ template "ethereum.fullname" . }}
+          servicePort: 8545
+      - path: /ws
+        backend:
+          serviceName: {{ template "ethereum.fullname" . }}
+          servicePort: 8546
+{{- end }}

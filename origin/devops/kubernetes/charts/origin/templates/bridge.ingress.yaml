@@ -1,0 +1,65 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ template "bridge.fullname" . }}
+  labels:
+    app: {{ template "bridge.fullname" . }}
+    app.kubernetes.io/name: origin
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/version: {{ .Chart.AppVersion }}
+    app.kubernetes.io/component: backend
+    app.kubernetes.io/part-of: origin-bridge
+  annotations:
+    kubernetes.io/ingress.class: {{ .Release.Namespace }}-ingress
+    kubernetes.io/tls-acme: "true"
+    certmanager.k8s.io/cluster-issuer: {{ .Values.clusterIssuer }}
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/affinity: "cookie"
+    nginx.ingress.kubernetes.io/session-cookie-name: "ingress"
+    nginx.ingress.kubernetes.io/session-cookie-hash: "sha1"
+    nginx.ingress.kubernetes.io/limit-rps: "5"
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      if ($request_method = 'GET') {
+          more_set_headers 'Access-Control-Allow-Origin: $http_origin';
+          more_set_headers 'Access-Control-Allow-Credentials: true';
+          more_set_headers 'Access-Control-Allow-Methods: GET, POST, OPTIONS';
+          more_set_headers 'Access-Control-Allow-Headers: DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
+      }
+
+      if ($request_method = 'OPTIONS') {
+          more_set_headers 'Access-Control-Allow-Origin: $http_origin';
+
+          # Cookie support
+          more_set_headers 'Access-Control-Allow-Credentials: true';
+          more_set_headers 'Access-Control-Allow-Methods: GET, POST, OPTIONS';
+
+          more_set_headers 'Access-Control-Allow-Headers: DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
+
+          # Tell client that this pre-flight info is valid for 20 days
+          more_set_headers 'Access-Control-Max-Age: 1728000';
+          more_set_headers 'Content-Type: text/plain charset=UTF-8';
+          more_set_headers 'Content-Length: 0';
+          return 204;
+      }
+
+      if ($request_method = 'POST') {
+          more_set_headers 'Access-Control-Allow-Origin: $http_origin';
+          more_set_headers 'Access-Control-Allow-Credentials: true';
+          more_set_headers 'Access-Control-Allow-Methods: GET, POST, OPTIONS';
+          more_set_headers 'Access-Control-Allow-Headers: DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type';
+      }
+spec:
+  tls:
+    - secretName: {{ template "bridge.host" . }}
+      hosts:
+        - {{ template "bridge.host" . }}
+  rules:
+  - host: {{ template "bridge.host" . }}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: {{ template "bridge.fullname" . }}
+          servicePort: 5000
