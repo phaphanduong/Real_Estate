@@ -1,0 +1,16 @@
+{
+  "packages": [
+    "dapps/**",
+    "infra/**",
+    "packages/**"
+  ],
+  "command": {
+    "bootstrap": {
+      "hoist": ["**"],
+      "nohoist": [
+        "openzeppelin-solidity"
+      ]
+    }
+  },
+  "version": "independent"
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@origin/tests",
+  "version": "1.0.0",
+  "description": "Integration tests for Origin Protocol",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "mocha --timeout 60000 --exit test"
+  },
+  "author": "Tom Linton <tom@originprotocol.com>",
+  "license": "MIT",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0"
+  }
+}
