@@ -9,13 +9,13 @@ import test from './test'
 import truffle from './truffle'
 
 export default {
-  docker,
-  kovanTst,
+  // docker,
+  // kovanTst,
   localhost,
-  localsecure,
-  mainnet,
-  origin,
-  rinkeby,
-  test,
-  truffle
+  // localsecure,
+  // mainnet,
+  // origin,
+  // rinkeby,
+  // test,
+  // truffle
 }

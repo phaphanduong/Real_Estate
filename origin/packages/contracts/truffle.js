@@ -5,7 +5,8 @@ const NonceTrackerSubprovider = require("web3-provider-engine/subproviders/nonce
 // How many addresses in wallet should we unlock?
 // (For deploying test data, we use other addresses as buyers and sellers)
 // Note: This is not used for Mainnet - only for Testnet and local deployment.
-const numAddressesToUnlock = 4
+// const numAddressesToUnlock = 4
+const numAddressesToUnlock = 9
 
 const providerUrl = process.env.PROVIDER_URL
 
@@ -112,6 +113,22 @@ if (process.env.ORIGIN_MNEMONIC) {
     },
     gas: 4712388,
     network_id: 2222
+  }
+}
+
+// local network
+if (process.env.LOCAL_MNEMONIC) {
+  truffleSetup.networks.origin = {
+    provider: function() {
+      return withNonceTracker(new HDWalletProvider(
+        process.env.LOCAL_MNEMONIC,
+        providerUrl,
+        0,
+        numAddressesToUnlock
+      ))
+    },
+    gas: 4712388,
+    network_id: 999
   }
 }
 

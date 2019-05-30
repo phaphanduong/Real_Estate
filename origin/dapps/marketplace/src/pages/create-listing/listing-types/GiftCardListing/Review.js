@@ -198,7 +198,7 @@ class Review extends Component {
                 <div className="col-9">{listing.quantity}</div>
               </div>
             )}
-            <div className="row">
+            {/* <div className="row">
               <div className="col-3 label">
                 <fbt desc="listing.review.boost-level">Boost Level</fbt>
               </div>
@@ -206,7 +206,7 @@ class Review extends Component {
                 <CoinPrice price={boost} coin="ogn" />
                 {isMulti ? fbt(' / unit', 'per unit') : ''}
               </div>
-            </div>
+            </div> */}
             {!isMulti ? null : (
               <div className="row">
                 <div className="col-3 label">

@@ -119,19 +119,21 @@ const announcements = [
 const lookup = [
   ...root,
   ...forSale,
-  ...forRent,
-  ...services,
-  ...announcements
+  ...forRent
+  // ...services,
+  // ...announcements
 ].reduce((m, o) => {
   m[o[0]] = o[1]
   return m
 }, {})
 
+  // 'schema.services': services,
+  // 'schema.announcements': an
 export default {
   root: root,
   lookup: lookup,
   'schema.forSale': forSale,
-  'schema.forRent': forRent,
-  'schema.services': services,
-  'schema.announcements': announcements
+  'schema.forRent': forRent
+  // 'schema.services': services,
+  // 'schema.announcements': announcements
 }

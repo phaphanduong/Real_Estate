@@ -36,7 +36,8 @@ async function deployContracts(deployer) {
     })
   })
 
-  const Seller = accounts[1]
+   const Seller = accounts[0]
+    
 
   const marketplace00 = await V00_Marketplace.deployed()
 

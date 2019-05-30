@@ -10,7 +10,9 @@ try {
 const config = {
   //config infomation connect private blockchain, ipfs,...( /constract/build/constract.json)
   provider: `http://${HOST}:8545`,
-  providerWS: `ws://${HOST}:8545`,
+  // providerWS: `ws://${HOST}:8545`,
+  providerWS: `ws://127.0.0.1:8545`,
+  
   ipfsGateway: `http://${HOST}:8080`,
   ipfsRPC: `http://${HOST}:5002`,
   bridge: `https://bridge.dev.originprotocol.com`,

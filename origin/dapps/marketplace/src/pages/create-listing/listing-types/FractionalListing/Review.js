@@ -81,9 +81,9 @@ class Review extends Component {
               </div>
             </div>
             <div className="row">
-              <div className="col-12 col-sm-3 label">
+              {/* <div className="col-12 col-sm-3 label">
                 <fbt desc="listing.review.boost-level">Boost Level</fbt>
-              </div>
+              </div> */}
               <div className="col-12 col-sm-9">
                 <CoinPrice price={boost} coin="ogn" />
                 <fbt desc="create.review.price-per-hour">/ night</fbt>

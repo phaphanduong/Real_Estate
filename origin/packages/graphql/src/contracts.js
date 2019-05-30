@@ -75,10 +75,10 @@ function pollForBlocks() {
 
 export function setNetwork(net, customConfig) {
   if (process.env.DOCKER && net !== 'test') {
-    net = 'docker'
+    net = 'localhost'
   }
   if (!Configs[net]) {
-    net = 'rinkeby'
+    net = 'localhost'
   }
 
   let config = JSON.parse(JSON.stringify(Configs[net]))
