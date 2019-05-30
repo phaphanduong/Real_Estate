@@ -68,13 +68,13 @@ const Categories$FbtEnum = {
   'schema.groups': 'Groups',
   'schema.localNews': 'Local News',
   'schema.lostFound': 'Lost and Found',
-  'schema.marketing': 'Marketing',
-  'schema.musicians': 'Musicians',
-  'schema.personals': 'Personals',
-  'schema.pets': 'Pets',
-  'schema.politics': 'Politics',
-  'schema.resumes': 'Resumes',
-  'schema.volunteers': 'Volunteers'
+  // 'schema.marketing': 'Marketing',
+  // 'schema.musicians': 'Musicians',
+  // 'schema.personals': 'Personals',
+  // 'schema.pets': 'Pets',
+  // 'schema.politics': 'Politics',
+  // 'schema.resumes': 'Resumes',
+  // 'schema.volunteers': 'Volunteers'
 }
 
 module.exports = Categories$FbtEnum

@@ -95,7 +95,7 @@ class Nav extends Component {
                     </span>
                   </NavLink>
                 </li>
-                <li className="nav-item d-none d-lg-flex">
+                {/* <li className="nav-item d-none d-lg-flex">
                   <EarnTokens className="nav-link icon-padding earn-tokens text">
                     <span className="d-md-none d-xl-flex">
                       <fbt desc="navbar.earnTokens">Earn Tokens</fbt>
@@ -104,7 +104,7 @@ class Nav extends Component {
                       <fbt desc="navbar.tokens">Tokens</fbt>
                     </span>
                   </EarnTokens>
-                </li>
+                </li> */}
                 <Confirmations {...navProps('confirmations')} />
                 <Messages {...navProps('messages')} />
                 <Notifications {...navProps('notifications')} />

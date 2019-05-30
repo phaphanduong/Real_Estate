@@ -5,6 +5,8 @@ import demoListings from './_demoListings'
 import get from 'lodash/get'
 import sortBy from 'lodash/sortBy'
 
+import Web3 from "web3"
+
 import {
   ImportWalletsMutation,
   DeployTokenMutation,
@@ -121,6 +123,7 @@ export default async function populate(gqlClient, log, done) {
     let result
     try {
       result = await gqlClient.mutate({ mutation, variables })
+      console.log('result', result)
     } catch (e) {
       console.log(JSON.stringify(e, null, 4))
       throw e
@@ -140,12 +143,36 @@ export default async function populate(gqlClient, log, done) {
   log(`Disabled MetaMask`)
 
   const accounts = mnemonicToAccounts()
+//   const accounts = [ { name: 'Admin',
+//   role: 'Admin',
+//   privateKey:
+//    '0x2bde7a63ff51ff028d4bd9043b489e918bf0e467e4a572a0015de807791c28e9' },
+// { name: 'Stan',
+//   role: 'Seller',
+//   privateKey:
+//    '0x1e8f3835d1f5765d64d8897b4c6ab99ba0628034fe06dc3607e92e91b323eb98' },
+// { name: 'Nick',
+//   role: 'Buyer',
+//   privateKey:
+//    '0xc6b91b97431d1472af611682b8d7fc5ac77e63acd8284bb7a2808682ffc177d3' },
+// { name: 'Origin',
+//   role: 'Arbitrator',
+//   privateKey:
+//    '0x977ed01a74a132484ca0b835edf6cbb5d7c63383f4e6078927655db75baf40ae' },
+// { name: 'Origin',
+//   role: 'Affiliate',
+//   privateKey:
+//    '0x1e2dfc77ef04c3e632850af71384a03ab3080fc758df969bab54914a54da8cbf' } 
+//   ]
+
+
+  console.log('account', accounts)
   const res = await mutate(ImportWalletsMutation, null, { accounts })
   const [Admin, Seller, Buyer, Arbitrator, Affiliate] = res.map(r => r.id)
-
+  console.log('res', res.map(r => r.id))
+  console.log('admin', Admin)
   await mutate(SendFromNodeMutation, NodeAccount, { to: Admin, value: '0.5' })
   log('Sent eth to Admin')
-
   const OGN = await mutate(DeployTokenMutation, Admin, {
     type: 'OriginToken',
     name: 'Origin Token',

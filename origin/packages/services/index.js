@@ -16,38 +16,39 @@ const portInUse = port =>
       .createServer()
       .once('error', () => resolve(true))
       .once('listening', () => srv.once('close', () => resolve(false)).close())
-      .listen(port, '0.0.0.0')
+      // .listen(port, '0.0.0.0')
+      .listen(port, '127.0.0.1')
   })
 
 const startGanache = (opts = {}) =>
   new Promise((resolve, reject) => {
-      const ganacheOpts = {
-      total_accounts: opts.total_accounts || 5,
-      default_balance_ether: 100,
-      db_path: `${__dirname}/data/db`,
-      network_id: 999,
-      mnemonic:
-        'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'
-      // blockTime: 3
-    }
-    if (opts.inMemory) {
-      ganacheOpts.db = memdown()
-    } else {
-      try {
-        fs.mkdirSync(`${__dirname}/data/db`)
-      } catch (e) {
-        /* Ignore */
-      }
-    }
-    const server = Ganache.server(ganacheOpts)
-    const port = 8545
-    server.listen(port, err => {
-      if (err) {
-        return reject(err)
-      }
-      console.log(`Ganache listening on port ${port}.`)
-      resolve(server)
-    })
+    //   const ganacheOpts = {
+    //   total_accounts: opts.total_accounts || 5,
+    //   default_balance_ether: 100,
+    //   db_path: `${__dirname}/data/db`,
+    //   network_id: 999,
+    //   mnemonic:
+    //     'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat'
+    //   // blockTime: 3
+    // }
+    // if (opts.inMemory) {
+    //   ganacheOpts.db = memdown()
+    // } else {
+    //   try {
+    //     fs.mkdirSync(`${__dirname}/data/db`)
+    //   } catch (e) {
+    //     /* Ignore */
+    //   }
+    // }
+    // const server = Ganache.server(ganacheOpts)
+    // const port = 8545
+    // server.listen(port, err => {
+    //   if (err) {
+    //     return reject(err)
+    //   }
+    //   console.log(`Ganache listening on port ${port}.`)
+    //   resolve(server)
+    // })
   })
 
 const startIpfs = () =>
@@ -97,6 +98,7 @@ function writeTruffleAddress(contract, network, address) {
     Contract.networks[network] = Contract.networks[network] || {}
     Contract.networks[network].address = address
     fs.writeFileSync(filename, JSON.stringify(Contract, null, 2))
+    console.log('write truffle address')
   } catch (error) {
     // Didn't copy contract build files into the build directory?
     console.log('Could not write contract address to truffle file')
@@ -110,24 +112,26 @@ const writeTruffle = () =>
     try {
       const rawAddresses = fs.readFileSync(contractsPath + '/contracts.json')
       const addresses = JSON.parse(rawAddresses)
-      // if (addresses.Marketplace) {
-      //   writeTruffleAddress('V00_Marketplace', '999', addresses.Marketplace)
-      // }
-      // if (addresses.IdentityEvents) {
-      //   writeTruffleAddress('IdentityEvents', '999', addresses.IdentityEvents)
-      // }
-      // if (addresses.OGN) {
-      //   writeTruffleAddress('OriginToken', '999', addresses.OGN)
-      // }
       if (addresses.Marketplace) {
-        writeTruffleAddress('V00_Marketplace', '2018', addresses.Marketplace)
+        writeTruffleAddress('V00_Marketplace', '999', addresses.Marketplace)
+        console.log('V00_Marketplace')
       }
       if (addresses.IdentityEvents) {
-        writeTruffleAddress('IdentityEvents', '2018', addresses.IdentityEvents)
+        writeTruffleAddress('IdentityEvents', '999', addresses.IdentityEvents)
       }
       if (addresses.OGN) {
-        writeTruffleAddress('OriginToken', '2018', addresses.OGN)
+        writeTruffleAddress('OriginToken', '999', addresses.OGN)
       }
+      // if (addresses.Marketplace) {
+      //   writeTruffleAddress('V00_Marketplace', '2018', addresses.Marketplace)
+      //   console.log('V00_Marketplace')
+      // }
+      // if (addresses.IdentityEvents) {
+      //   writeTruffleAddress('IdentityEvents', '2018', addresses.IdentityEvents)
+      // }
+      // if (addresses.OGN) {
+      //   writeTruffleAddress('OriginToken', '2018', addresses.OGN)
+      // }
     } catch (e) {
       console.log(e)
     }
@@ -137,8 +141,8 @@ const writeTruffle = () =>
 const startSslProxy = () =>
   new Promise(resolve => {
     console.log('Starting secure proxies...')
-    // const Ports = [[443, 3000], [8546, 8545], [8081, 8080], [5003, 5002]]
-    const Ports = [[443, 3000], [8546, 8547], [8081, 8080], [5003, 5002]]
+     const Ports = [[8546, 8545], [8081, 8080], [5003, 5002]]
+    // const Ports = [[443, 3000], [8546, 8547], [8081, 8080], [5003, 5002]]
     Ports.map(pair => {
       const [src, port] = pair
       proxy
@@ -169,6 +173,7 @@ const deployContracts = ({ skipIfExists, filename = 'contracts' }) =>
       }
     }
     const originContractsPath = path.resolve(__dirname, '../graphql')
+    console.log('originconstractpath', originContractsPath)
     const startServer = spawn(
       `node`,
       ['-r', '@babel/register', 'fixtures/populate-server.js', filename],
@@ -178,6 +183,7 @@ const deployContracts = ({ skipIfExists, filename = 'contracts' }) =>
         env: process.env
       }
     )
+    console.log('index 182')
     startServer.on('exit', code => {
       if (code === 0) {
         console.log('Deploying contracts finished OK.')
@@ -193,17 +199,19 @@ const started = {}
 let extrasResult
 
 module.exports = async function start(opts = {}) {
-  if (opts.ganache && !started.ganache) {
-    const ganacheOpts = opts.ganache === true ? {} : opts.ganache
-    // if (await portInUse(8545)) {
-      if (await portInUse(8547)) {
-      // console.log('Ganache already started')
-      console.log('Private blockchain already started')
-    } else {
-      started.ganache = await startGanache(ganacheOpts)
-    }
-  }
-
+  console.log('index 201')
+  //start ganache
+  // if (opts.ganache && !started.ganache) {
+  //   const ganacheOpts = opts.ganache === true ? {} : opts.ganache
+  //   if (await portInUse(8545)) {
+  //   console.log('Ganache already started')
+  //     // if (await portInUse(8547)) {
+  //     // console.log('Private blockchain already started')
+  //   } else {
+  //     started.ganache = await startGanache(ganacheOpts)
+  //   }
+  // }
+  //start IPFS
   if (opts.ipfs && !started.ipfs) {
     if (await portInUse(5002)) {
       console.log('IPFS already started')
@@ -215,7 +223,7 @@ module.exports = async function start(opts = {}) {
       await populateIpfs()
     }
   }
-
+//deploy constract
   if (opts.deployContracts && !started.contracts) {
     if (!fs.existsSync(`${contractsPath}/contracts.json`)) {
       fs.writeFileSync(`${contractsPath}/contracts.json`, '{}')
@@ -226,9 +234,9 @@ module.exports = async function start(opts = {}) {
     await deployContracts({
       skipIfExists: opts.skipContractsIfExists,
       filename: opts.contractsFile
-    },
-      console.log("deploy contract")
+    }
     )
+    console.log("deploy contract"),
     started.contracts = true
   }
 
